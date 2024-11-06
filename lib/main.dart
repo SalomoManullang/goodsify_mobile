@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:goodsify/menu.dart';
+import 'package:goodsify/screens/menu.dart';
 
 void main() {
   runApp(const MyApp());
