@@ -296,3 +296,193 @@ Gunakan `final` untuk variabel yang nilainya hanya diketahui saat runtime, dan `
 
 </details>
 
+
+# TUGAS 8: Flutter Navigation, Layouts, Forms, and Input Elements
+
+<details>
+  <summary></summary>
+
+## `Const` di Flutter 
+
+#### Fungsi `const` di Flutter?
+
+1. **Menghemat Memori**  
+   Ketika kita menggunakan `const`, Flutter tidak membuat ulang objek setiap kali dibutuhkan. Sebaliknya, Flutter akan memakai objek yang sama (reuse) berulang kali, sehingga penggunaan memori jadi lebih efisien.
+
+2. **Mengurangi Beban Rendering**  
+   Widget yang didefinisikan sebagai `const` tidak perlu di-render ulang jika isinya tidak berubah. Ini berarti Flutter tidak harus menggambar ulang widget tersebut, yang membuat performa aplikasi lebih mulus dan stabil.
+
+3. **Mempercepat Waktu Kompilasi**  
+   Karena nilai-nilai `const` sudah tetap sejak awal, Flutter bisa memprosesnya lebih cepat saat kompilasi. Hasilnya, aplikasi lebih cepat dan kemungkinan error runtime berkurang.
+  
+#### Kapan Sebaiknya Gunakan `const`?
+
+1. **Untuk Widget yang Nggak Pernah Berubah**  
+   Jika punya widget yang tampilannya nggak bakal berubah, seperti `Text` atau `Icon`, pakai `const` supaya lebih efisien.  
+   ```dart
+   const Text('Hello, Flutter');
+   ```
+
+2. **Untuk Layout Sederhana**
+    Elemen layout seperti `Row`, `Column`, atau `Padding` yang tampilannya tetap bisa dijadikan `const` agar lebih hemat memori.
+    ```dart
+      const Padding(
+      padding: EdgeInsets.all(16.0),
+      child: Text('Static Text'),
+      );
+    ```
+
+3. **Untuk Variabel dengan Nilai Tetap**
+    Kalau ada nilai yang nggak akan berubah, seperti angka atau warna tertentu, sebaiknya pakai `const`.
+    ```dart
+      const primaryColor = Colors.blue;
+    ```
+
+#### Kapan sebaiknya tidak gunakan `Const`?
+
+1. **Widget yang Dinamis atau Berubah**
+  Jika widget membutuhkan data yang berubah selama runtime (misalnya data dari server, state management, atau input user), hindari const karena nilai yang konstan tidak dapat diubah setelah ditentukan.
+
+2. **Kondisi yang Memerlukan Perhitungan Ulang**
+  Jika Anda ingin menghitung ulang suatu nilai atau membuat objek baru berdasarkan kondisi tertentu, gunakan kata kunci `final` atau biarkan tanpa `const`.
+
+3. **Interaksi dengan State Management**
+  Ketika berinteraksi dengan `StatefulWidget` atau `library state management`, `widget` cenderung membutuhkan perubahan nilai berdasarkan `state`, sehingga `const` tidak cocok digunakan di sini.
+
+
+## `Column` dan `Row` pada Flutter?
+
+1. **Column**  
+   `Column` adalah widget di Flutter yang menampilkan anak-anaknya secara vertikal (dari atas ke bawah). Ini cocok digunakan jika kita ingin menumpuk widget satu di atas yang lain, seperti daftar teks atau tombol yang ditampilkan secara vertikal.
+
+    ```dart 
+      Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text('Ini adalah teks pertama'),
+          Text('Ini adalah teks kedua'),
+          ElevatedButton(
+            onPressed: () {},
+            child: Text('Tombol'),
+          ),
+        ],
+      )
+
+    ```
+
+2. **Row**  
+   `Row`, sebaliknya, menampilkan anak-anaknya secara horizontal (dari kiri ke kanan). `Row` berguna jika kita ingin menyusun widget secara berdampingan, seperti ikon atau tombol dalam satu garis horizontal.
+
+   ```dart
+    Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: <Widget>[
+        Icon(Icons.home),
+        Text('Home'),
+        ElevatedButton(
+          onPressed: () {},
+          child: Text('Tombol'),
+        ),
+      ],
+    )
+   ```
+
+
+#### Perbandingan `Column` vs `Row`
+
+| Aspek            | Column                          | Row                          |
+|------------------|---------------------------------|------------------------------|
+| Arah Layout      | Vertikal (atas ke bawah)        | Horizontal (kiri ke kanan)   |
+| Gunakan untuk    | Menyusun widget secara vertikal | Menyusun widget secara horizontal |
+| Alignment        | `MainAxisAlignment` (vertikal)  | `MainAxisAlignment` (horizontal) |
+| Cross Alignment  | `CrossAxisAlignment` (horizontal) | `CrossAxisAlignment` (vertikal) |
+
+
+## Elemen input yang  digunakan pada halaman form pada proyek
+
+Pada halaman form yang saya buat, satu-satunya elemen input yang digunakan adalah `TextFormField`. `TextFormField` digunakan untuk menerima input dari pengguna dan dapat memiliki validasi yang memastikan input sesuai dengan yang diharapkan. Pada aplikasi ini, `TextFormField` digunakan untuk memasukkan beberapa data seperti nama produk, deskripsi, harga, dan rating. Setiap `TextFormField` memiliki beberapa atribut penting, seperti:
+
+1. `decoration`: Mengatur tampilan input, seperti hintText, labelText, dan border.
+2. `onChanged`: Callback yang dipanggil setiap kali teks diubah, sehingga kita bisa memperbarui variabel  terkait.
+3. `validator`: Fungsi yang digunakan untuk validasi input, memastikan data sesuai aturan yang kita tentukan (misalnya, tidak boleh kosong atau harus berupa angka).
+
+Berikut adalah contoh TextFormField yang digunakan untuk memasukkan nama produk.
+
+```dart
+Padding(
+  padding: const EdgeInsets.all(8.0),
+  child: TextFormField(
+    decoration: InputDecoration(
+      hintText: "Nama Produk", // Teks contoh yang muncul di dalam field saat kosong
+      labelText: "Nama Produk", // Label yang muncul di atas atau dalam field
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(5.0), // Membuat border melengkung
+      ),
+    ),
+    onChanged: (String? value) {
+      setState(() {
+        _nama = value!; // Memperbarui variabel _nama setiap kali ada perubahan
+      });
+    },
+    validator: (String? value) {
+      if (value == null || value.isEmpty) {
+        return "Nama Produk tidak boleh kosong!"; // Pesan error jika input kosong
+      }
+      return null; // Validasi berhasil jika input tidak kosong
+    },
+  ),
+),
+```
+
+#### Elemen Input Flutter yang Tidak Digunakan dalam Goodsify
+
+1. **Checkbox**  
+    Checkbox adalah widget input yang memungkinkan pengguna untuk membuat pilihan boolean, seperti memilih antara "ya" atau "tidak".
+
+2. **Radio Button**  
+    Radio button memungkinkan pengguna untuk memilih satu opsi dari beberapa pilihan yang disediakan.
+
+3. **Dropdown Button**  
+    Dropdown button menyediakan daftar pilihan dalam bentuk dropdown, memungkinkan pengguna memilih satu nilai dari beberapa opsi.
+
+4. **Switch**  
+    Switch adalah widget mirip Checkbox, tetapi tampilannya seperti saklar on/off, yang biasa digunakan untuk pilihan aktif/nonaktif.
+
+5. **Slider**  
+    Slider memungkinkan pengguna memilih nilai dalam rentang tertentu dengan menggeser tombol pada sumbu horizontal.
+
+6. **DatePicker dan TimePicker**  
+    DatePicker dan TimePicker adalah widget yang menyediakan antarmuka bagi pengguna untuk memilih tanggal dan waktu.
+
+
+## cara  mengatur tema (theme) dalam aplikasi Flutter
+
+Dalam aplikasi Flutter, kita dapat mengatur tema pada widget `MaterialApp`, yang berfungsi seperti file `base.html` pada website. Widget ini menjadi referensi tema utama bagi seluruh widget dalam aplikasi, sehingga komponen lainnya dapat mengikuti gaya dan skema warna yang telah ditentukan.Pada aplikasi yang saya buat, tema dasar diatur melalui `MaterialApp` seperti contoh berikut:
+
+```dart 
+MaterialApp(
+  title: 'Goodsify',
+  theme: ThemeData(
+    colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.deepPurple)
+        .copyWith(secondary: Colors.deepPurple[400]),
+    useMaterial3: true,
+  ),
+  home: MyHomePage(),
+);
+```
+
+Setelah tema utama diatur, elemen lain dalam aplikasi dapat mengambil referensi dari tema ini untuk menjaga konsistensi tampilan. Berikut adalah contoh implementasi tema pada salah satu elemen di aplikasi saya:
+
+```dart 
+AppBar(
+  title: const Text('Goodsify'),
+  backgroundColor: Theme.of(context).colorScheme.primary,
+);
+```
+
+## Cara navigasi dalam aplikasi dengan banyak halaman pada Flutter
+
+Untuk mengatur supaya tiadk pusing dalam navigasi banyaknya halaman di Flutter, aku membagi bagian bagiannya dalam folder yang berbeda. Aku membuat folder `screens` yang berisikan halaman halaman yang nantinya akan ditampilkan dalam aplikasi. Folder ini berisi `menu.dart` untuk main page dan `productentry_vorm.dart` untuk halaman forum produk. Selain folder `screens` aku juga membuat folder `widgets` yang berisi `widgets` atau bagian bagian dari aplikasi ini. ini berisi `left_drawer.dart` dan `product_card.dart`. Nantinya mereka akan dihubungkan melalui function `import`. Untuk emnghubungkan `widget` dengan `screen`, aku menggunakan fungsi `Navigator.push` dan `Navigator.pushReplacement`. 
+
+</details>
