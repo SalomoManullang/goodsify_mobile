@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:goodsify/screens/list_productentry.dart';
+import 'package:goodsify/screens/login.dart';
 import 'package:goodsify/screens/productentry_form.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:provider/provider.dart';
 
 class ShopItem {
   final String name;
@@ -16,25 +20,54 @@ class ShopCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final request = context.watch<CookieRequest>();
+
     return Material(
       color: item.color, // Gunakan warna dari ShopItem
       borderRadius: BorderRadius.circular(12),
       child: InkWell(
-        onTap: () {
+        onTap: () async {
           if (item.name == "Add Product") {
             // Navigasi ke form ProductEntryForm ketika "Add Product" dipencet
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => const ProductEntryFormPage()),
-            );
-          } else {
-            // Menampilkan SnackBar untuk item lainnya
-            ScaffoldMessenger.of(context)
-              ..hideCurrentSnackBar()
-              ..showSnackBar(SnackBar(
-                  content: Text("Kamu telah menekan tombol ${item.name}!")));
+            );}
+
+          else if (item.name == "Product List") {
+                Navigator.push(context,
+                    MaterialPageRoute(
+                        builder: (context) => const ProductEntryPage()
+                    ),
+                );
+            }
+            else if (item.name == "Logout") {
+              final response = await request.logout(
+            "http://127.0.0.1:8000/auth/logout/");
+              String message = response["message"];
+              if (context.mounted) {
+                  if (response['status']) {
+                      String uname = response["username"];
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text("$message Sampai jumpa, $uname."),
+                      ));
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (context) => const LoginPage()),
+                      );
+                  } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                              content: Text(message),
+                          ),
+                      );
+                  }
+              }
           }
+
         },
+        
+        
         child: Container(
           padding: const EdgeInsets.all(8),
           child: Center(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:goodsify/screens/list_productentry.dart';
 import 'package:goodsify/screens/menu.dart';
 import 'package:goodsify/screens/productentry_form.dart';
 
@@ -54,7 +55,6 @@ class LeftDrawer extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.mood),
             title: const Text('Tambah Produk'),
-            // Bagian redirection ke MoodEntryFormPage
             onTap: () {
               Navigator.pushReplacement(
               context,
@@ -63,6 +63,16 @@ class LeftDrawer extends StatelessWidget {
               ));
 
             },
+          ),
+          ListTile(
+            leading: const Icon(Icons.add_reaction_rounded),
+            title: const Text('Daftar Produk'),
+            onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const ProductEntryPage()),
+                  );
+              },
           ),
         ],
       ),
